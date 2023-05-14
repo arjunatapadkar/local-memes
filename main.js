@@ -1,112 +1,61 @@
+const memeContainer = document.querySelector('#meme-container');
+const memeCanvas = document.querySelector('#meme-canvas');
+const topTextInput = document.querySelector('#top-text-input');
+const bottomTextInput = document.querySelector('#bottom-text-input');
+const imageInput = document.querySelector('#image-input');
+const generateButton = document.querySelector('#generate-btn');
+const downloadButton = document.querySelector('#download-btn');
+const shareButton = document.querySelector('#share-btn');
 
-
-const imageFileInput = document.querySelector('#img-file-ip');
-const topTextInput = document.querySelector('#top-text-ip');
-const bottomTextInput = document.querySelector('#bottom-text-ip');
-const canvas = document.querySelector('#meme');
-
-let image;
-
-imageFileInput.addEventListener("change", ()=>{
-
-    const imageDataUrl = URL.createObjectURL(imageFileInput.files[0]);
-
-    image = new Image();
-    image.src = imageDataUrl;
-
-    image.addEventListener("load", ()=>{
-
-        updateMemeCanvas(canvas, image, topTextInput.value, bottomTextInput.value);
-
-    }, {once : true});
-
-});
-
-topTextInput.addEventListener("change", ()=>{
-    updateMemeCanvas(canvas, image, topTextInput.value, bottomTextInput.value);
-});
-
-bottomTextInput.addEventListener("change", ()=>{
-    updateMemeCanvas(canvas, image, topTextInput.value, bottomTextInput.value);
-});
-
-
-function updateMemeCanvas(canvas, image, topText, bottomText){
-    
-    const ctx = canvas.getContext("2d");
-    const width = image.width;
-    const height = image.height;
-    const fontSize = Math.floor(width/10);
-    const yOffset = height / 25;
-
-
-    // update canvas background
-    canvas.width = width;
-    canvas.height = height;
-    ctx.drawImage(image, 0, 0);
-
-    // prepare text
-    ctx.strokeStyle = "black";
-    ctx.lineWidth = Math.floor(fontSize/4);
-    ctx.fillStyle = "White";
-    ctx.textAlign = "center";
-    ctx.lineJoin = "round";
-    ctx.font = `${fontSize}px sans-serif`;
-
-
-    // top text
-    ctx.textBaseline = "top";
-    ctx.strokeText = (topText, width/2, yOffset);
-    ctx.fillText(topText, width/2, yOffset);
-
-
-    // bottom text
-    ctx.textBaseline = "bottom";
-    ctx.strokeText = (bottomText, width/2, height - yOffset);
-    ctx.fillText(bottomText, width/2,  height - yOffset);
+// Draw the meme onto the canvas
+function drawMeme(image) {
+  const context = memeCanvas.getContext('2d');
+  memeCanvas.width = 500;
+  memeCanvas.height = 500;
+  context.drawImage(image, 0, 0, 500, 500);
+  context.font = 'bold 40px Arial';
+  context.fillStyle = 'white';
+  context.strokeStyle = 'black';
+  context.textAlign = 'center';
+  context.lineWidth = 2;
+  context.fillText(topTextInput.value, 250, 50);
+  context.strokeText(topTextInput.value, 250, 50);
+  context.fillText(bottomTextInput.value, 250, 450);
+  context.strokeText(bottomTextInput.value, 250, 450);
 }
 
 
-// downloading function
-function download() {
-    var download = document.getElementById("download");
-    var image = document.getElementById("meme").toDataURL("image/png").replace("image/png", "image/octet-stream");
-    download.setAttribute("href", image);
-   
-}
+// Generate meme on click of Generate button
+generateButton.addEventListener('click', () => {
+  const image = new Image();
+  image.src = imageInput.files[0] ? URL.createObjectURL(imageInput.files[0]) : 'https://i.imgflip.com/3g3y0v.jpg';
+  image.onload = () => {
+    memeCanvas.width = image.width;
+    memeCanvas.height = image.height;
+    drawMeme(image);
+  };
+});
 
+// Download meme on click of Download button
+downloadButton.addEventListener('click', () => {
+  const downloadLink = document.createElement('a');
+  downloadLink.href = memeCanvas.toDataURL('image/png');
+  downloadLink.download = 'meme.png';
+  downloadLink.click();
+});
 
-  // Assume that 'memeImage' is a variable containing the URL of the image to be shared
-
-const shareButton = document.createElement('button');
-shareButton.innerText = 'Share Image';
-
+// Share meme on click of Share button
 shareButton.addEventListener('click', () => {
+  const shareUrl = memeCanvas.toDataURL('image/png');
   if (navigator.share) {
     navigator.share({
-      title: 'Check out this meme!',
-      text: 'I made this meme and wanted to share it with you.',
-      url:document.getElementById("meme").toDataURL("image/png").replace("image/png", "image/octet-stream").src
+      title: 'My Meme',
+      text: 'Check out my meme!',
+      url: shareUrl,
     })
-      .then(() => console.log('Image shared successfully.'))
-      .catch((error) => console.error('Error sharing image:', error));
+      .then(() => console.log('Successful share'))
+      .catch(error => console.log('Error sharing:', error));
   } else {
-    console.log('Web Share API not supported on this device.');
+    console.log('Web Share API not supported');
   }
 });
-
-document.body.appendChild(shareButton);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
