@@ -5,7 +5,7 @@ const bottomTextInput = document.querySelector('#bottom-text-input');
 const imageInput = document.querySelector('#image-input');
 const generateButton = document.querySelector('#generate-btn');
 const downloadButton = document.querySelector('#download-btn');
-const shareButton = document.querySelector('#share-btn');
+// const shareButton = document.querySelector('#share-btn');
 
 // Draw the meme onto the canvas
 function drawMeme(image) {
@@ -45,17 +45,34 @@ downloadButton.addEventListener('click', () => {
 });
 
 // Share meme on click of Share button
-shareButton.addEventListener('click', () => {
-  const shareUrl = memeCanvas.toDataURL('image/png');
+// const memeCanvas = document.getElementById('memeCanvas');
+const shareButton = document.getElementById('shareButton');
+
+// Set the canvas dimensions to 500x500
+memeCanvas.width = 500;
+memeCanvas.height = 500;
+
+// Add an event listener to the share button that generates a data URL for the canvas image and shares it using the navigator.share API
+shareButton.addEventListener('click', async function() {
+  const dataUrl = memeCanvas.toDataURL();
+  
+  // Check if the navigator.share API is supported
   if (navigator.share) {
-    navigator.share({
-      title: 'My Meme',
-      text: 'Check out my meme!',
-      url: shareUrl,
-    })
-      .then(() => console.log('Successful share'))
-      .catch(error => console.log('Error sharing:', error));
+    try {
+      // Share the image using the navigator.share API
+      await navigator.share({
+        title: 'Meme',
+        text: 'Check out this awesome meme I made!',
+        url: '',
+        files: [new File([dataUrl], 'meme.png', { type: 'image/png' })]
+      });
+    } catch (error) {
+      console.error('Error sharing:', error);
+    }
   } else {
-    console.log('Web Share API not supported');
+    // If the navigator.share API is not supported, display an error message
+    alert('Sharing is not supported on your browser.');
   }
 });
+
+
