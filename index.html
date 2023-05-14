@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mememaker</title>
+
+    <style>
+
+        .meme-maker{
+            margin: 30px auto;
+            display: flex;
+            flex-direction: column ;
+            max-width: 400px;
+            font-family: sans-serif;
+        }
+
+        .meme-maker label{
+            display: block;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .meme-maker input{
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 1.5rem;
+        }
+
+        #meme{
+            width: 100%;
+
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="meme-maker">
+
+        <label >Select an Image</label>
+        <input type="file" id="img-file-ip">
+
+        <label >Top Text</label>
+        <input type="text" id="top-text-ip">
+
+        <label>Bottom Text</label>
+        <input type="text " id="bottom-text-ip">
+
+        <canvas id="meme"></canvas>
+
+
+        <a id="download" download="triangle.png">
+            <button type="button" onClick="download()">Download</button>
+            </a>
+
+        <button id="share">
+            Share
+        </button>
+
+    </div>
+
+
+    <script src="./main.js"></script>
+</body>
+</html>
